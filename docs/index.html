@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-Fold — an AlphaFold3-dimension model you can train on one GPU</title>
+<meta name="description" content="F-Fold is a config-faithful AlphaFold3 reimplementation whose hyperparameters are machine-verified against OpenFold3-preview, with a single-GPU distillation pipeline.">
+<style>
+  :root{
+    --ink:#14161a; --mid:#555b66; --faint:#8a909b;
+    --rule:#e3e6ea; --bg:#ffffff; --panel:#f7f8fa;
+    --accent:#c2410c; --ok:#15803d; --warn:#b45309;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 24px}
+  header{border-bottom:1px solid var(--rule);padding:72px 0 40px}
+  h1{font-size:44px;line-height:1.1;margin:0 0 14px;letter-spacing:-.022em}
+  h1 .dim{color:var(--faint);font-weight:400}
+  .tagline{font-size:20px;color:var(--mid);margin:0 0 26px;max-width:40em}
+  .links a{display:inline-block;margin:0 10px 8px 0;padding:8px 14px;
+    border:1px solid var(--rule);border-radius:6px;text-decoration:none;
+    color:var(--ink);font-size:14px;font-weight:500}
+  .links a:hover{border-color:var(--ink)}
+  .links a.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+  h2{font-size:26px;margin:56px 0 8px;letter-spacing:-.015em}
+  h3{font-size:17px;margin:30px 0 6px}
+  p{margin:0 0 16px;max-width:42em}
+  .lead{color:var(--mid)}
+  code,kbd{font-family:var(--mono);font-size:.88em;background:var(--panel);
+    padding:1px 5px;border-radius:4px}
+  pre{background:var(--panel);border:1px solid var(--rule);border-radius:8px;
+    padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
+    line-height:1.55;margin:0 0 18px}
+  pre code{background:none;padding:0}
+  table{border-collapse:collapse;width:100%;margin:0 0 20px;font-size:14.5px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);
+    vertical-align:top}
+  th{font-weight:600;color:var(--mid);font-size:13px;text-transform:uppercase;
+    letter-spacing:.04em}
+  td.num,th.num{text-align:right;font-family:var(--mono);font-size:13.5px}
+  figure{margin:26px 0 10px}
+  figure img{width:100%;display:block;border:1px solid var(--rule);border-radius:8px}
+  figcaption{font-size:13.5px;color:var(--mid);margin-top:10px;line-height:1.6}
+  .callout{border-left:3px solid var(--accent);background:var(--panel);
+    padding:18px 20px;border-radius:0 8px 8px 0;margin:0 0 22px}
+  .callout p:last-child{margin-bottom:0}
+  .callout.good{border-left-color:var(--ok)}
+  .pill{display:inline-block;font-family:var(--mono);font-size:12px;
+    padding:2px 8px;border-radius:999px;background:var(--panel);
+    border:1px solid var(--rule);color:var(--mid)}
+  .pass{color:var(--ok);font-weight:600}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:14px;margin:0 0 24px}
+  .stat{border:1px solid var(--rule);border-radius:8px;padding:14px 16px}
+  .stat .v{font-size:25px;font-weight:650;font-family:var(--mono);
+    letter-spacing:-.02em;line-height:1.2}
+  .stat .k{font-size:12.5px;color:var(--mid);margin-top:3px}
+  footer{border-top:1px solid var(--rule);margin-top:72px;padding:32px 0 64px;
+    font-size:14px;color:var(--mid)}
+  footer a{color:var(--ink)}
+  @media (max-width:640px){h1{font-size:33px}.tagline{font-size:18px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>F-Fold</h1>
+    <p class="tagline">An AlphaFold3-architecture model whose hyperparameters are
+      machine-verified against OpenFold3-preview — and small enough to
+      <em>train</em>, not just run, on a single 15&nbsp;GB GPU.</p>
+    <div class="links">
+      <a class="primary" href="https://github.com/zhu-algorithm/f-fold">Source on GitHub</a>
+      <a href="#alignment">Alignment evidence</a>
+      <a href="#results">Measured results</a>
+      <a href="#limits">Limitations</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<h2>What this is</h2>
+<p class="lead">F-Fold is an independently written implementation of the
+AlphaFold3 architecture — Pairformer, MSA module, template stack, diffusion
+module and all five confidence heads — at the exact tensor dimensions used by
+<a href="https://github.com/aqlaboratory/openfold3">OpenFold3-preview</a>, the
+AlQuraishi Lab / OpenFold consortium's Apache-2.0 AF3 reproduction. It ships
+with a distillation pipeline that turns AlphaFold DB structures into your own
+trained weights.</p>
+
+<div class="callout">
+  <p><strong>What it is not: a competitor to AlphaFold on accuracy.</strong>
+  The trained preset is distilled <em>from</em> AlphaFold, so AlphaFold is its
+  ceiling by construction, not its benchmark. It has no MSA search, no
+  templates, and no all-atom output in the trained path. The structures it
+  produces today are <em>not</em> correct folds — see
+  <a href="#results">measured results</a>, where we report that plainly. If you
+  need accurate structures, use AlphaFold2, OpenFold3, Boltz-2 or Chai-1.</p>
+</div>
+
+<p>What F-Fold offers instead is <strong>reproducible architectural
+fidelity at a hardware tier where AF3-class models are otherwise
+unreachable</strong>, with every number on this page generated by a script in
+the repository.</p>
+
+<div class="grid">
+  <div class="stat"><div class="v pass">203/203</div>
+    <div class="k">config fields matching OpenFold3</div></div>
+  <div class="stat"><div class="v">368.0M</div>
+    <div class="k">parameters, <code>ffold-base</code></div></div>
+  <div class="stat"><div class="v">8.8M</div>
+    <div class="k">parameters, <code>ffold-mini</code></div></div>
+  <div class="stat"><div class="v">5.9&nbsp;GB</div>
+    <div class="k">peak VRAM while training</div></div>
+</div>
+
+<h2 id="alignment">Hyperparameter alignment</h2>
+<p><code>ffold/config.py</code> is written by hand against the AF3
+specification. It is deliberately <strong>not</strong> generated from
+OpenFold3's config — that is what makes the comparison a test rather than a
+tautology. <code>ffold/check_alignment.py</code> extracts the reference from the
+<code>openfold3==0.4.1</code> source distribution, diffs every shape-bearing
+field, and exits non-zero on any disagreement, so it can run in CI.</p>
+
+<pre><code>$ python ffold/check_alignment.py
+           match: 203
+$ echo $?
+0</code></pre>
+
+<p>Kernel selection, memory offloading, activation checkpointing and
+weight-initialisation policy are explicitly excluded — they do not change
+tensor shapes. Everything that does is compared. The base dimensions:</p>
+
+<table>
+  <thead><tr><th>Field</th><th class="num">Value</th><th>Field</th><th class="num">Value</th></tr></thead>
+  <tbody>
+    <tr><td><code>c_s</code> — single/token</td><td class="num">384</td>
+        <td><code>c_atom</code></td><td class="num">128</td></tr>
+    <tr><td><code>c_z</code> — pair</td><td class="num">128</td>
+        <td><code>c_atom_pair</code></td><td class="num">16</td></tr>
+    <tr><td><code>c_m</code> — MSA</td><td class="num">64</td>
+        <td><code>c_token_embedder</code></td><td class="num">384</td></tr>
+    <tr><td><code>c_t</code> — template</td><td class="num">64</td>
+        <td><code>c_token_diffusion</code></td><td class="num">768</td></tr>
+    <tr><td><code>c_s_input</code></td><td class="num">449</td>
+        <td><code>sigma_data</code></td><td class="num">16</td></tr>
+  </tbody>
+</table>
+
+<p>Stack depths: Pairformer 48 blocks (16 pair-bias heads, <code>c_hidden</code>
+24); diffusion transformer 24 blocks (16 heads, <code>c_hidden</code> 48); MSA
+module 4; template pair stack 2; confidence Pairformer 4; atom encoder and
+decoder 3 each. Label spaces: distogram 64 bins over 2–22&nbsp;Å, pLDDT 50 bins,
+PAE and PDE 64 bins over 0–32&nbsp;Å. Diffusion follows the EDM schedule with
+<code>s_max</code> 160, <code>s_min</code> 4×10⁻⁴, <code>p</code> 7.</p>
+
+<figure>
+  <img src="assets/param_audit.png"
+       alt="Dot plot of parameter count per module on a log axis, comparing ffold-base and ffold-mini. The diffusion transformer and Pairformer dominate both presets.">
+  <figcaption><strong>Parameter distribution at AF3 dimensions.</strong>
+  The diffusion transformer (198.3M) and Pairformer (147.4M) account for 94% of
+  <code>ffold-base</code>. <code>ffold-mini</code> narrows widths roughly 3× and
+  depths 6×, and omits the MSA and template modules entirely. Counts come from
+  meta-device instantiation, so the 368M preset is audited without allocating
+  it. These are F-Fold's own counts — not a claim about the OpenFold3
+  checkpoint, which is gated and was never inspected.</figcaption>
+</figure>
+
+<h2 id="results">Measured results</h2>
+<p>A 1,723-structure teacher set was built from AlphaFold&nbsp;DB <strong>v6</strong>
+(retrieved 2026-10-24): reviewed UniProt sequences of 60–256&nbsp;aa,
+k-mer-deduplicated at a 0.30 shared-5-mer ceiling, with models below mean pLDDT
+70 discarded as predicted disorder rather than folds. Human lysozyme&nbsp;C
+(<code>P61626</code>, 148&nbsp;aa, teacher mean pLDDT 94.1) was held out and
+excluded from training by both accession and sequence similarity.</p>
+
+<p><code>ffold-mini</code> was trained on one Tesla T4 with AMP and gradient
+checkpointing, batch 8 at crop 160. The run was stopped by a 2-hour wall clock
+at <strong>step 2,000 of 8,000</strong>, so these numbers describe a
+quarter-trained model, not a converged one.</p>
+
+<table>
+  <thead><tr><th>Metric</th><th class="num">F-Fold</th><th>Reference point</th></tr></thead>
+  <tbody>
+    <tr><td>Distogram cross-entropy (held-out)</td><td class="num">2.633</td>
+        <td>4.159 = uniform over 64 bins</td></tr>
+    <tr><td>Distogram cross-entropy (validation)</td><td class="num">2.211</td>
+        <td>at the saved checkpoint</td></tr>
+    <tr><td>Contact precision P@L/5, <code>|i−j|≥12</code></td><td class="num">0.310</td>
+        <td>0.022 = base rate of &lt;8&nbsp;Å pairs at this separation</td></tr>
+    <tr><td>Contact precision P@L/5, <code>|i−j|≥24</code></td><td class="num">0.034</td>
+        <td>0.018 base rate — essentially no long-range signal</td></tr>
+    <tr><td>pLDDT correlation with teacher (Pearson)</td><td class="num">0.958</td>
+        <td>Spearman 0.670</td></tr>
+    <tr><td>Cβ RMSD to teacher after Kabsch</td><td class="num">14.31&nbsp;Å</td>
+        <td><strong>1.19&nbsp;Å</strong> from teacher distances</td></tr>
+    <tr><td>TM-score to teacher</td><td class="num">0.200</td>
+        <td>&lt;0.17 is random; &gt;0.5 is the same fold</td></tr>
+  </tbody>
+</table>
+
+<div class="callout good">
+  <p><strong>The control matters more than the headline.</strong> Feeding the
+  <em>teacher's own</em> distance matrix through the identical MDS-plus-refinement
+  reconstruction recovers the structure to 1.19&nbsp;Å. The reconstruction code is
+  therefore sound, and the 14.31&nbsp;Å result is attributable to the model's
+  predicted distances — specifically its missing long-range contacts — rather
+  than to a bug in the geometry pipeline. That is the distinction a reviewer
+  would ask for first.</p>
+</div>
+
+<figure>
+  <img src="assets/teacher_vs_student.png"
+       alt="Top: two Cβ–Cβ distance matrices for human lysozyme C, the AlphaFold teacher showing sharp off-diagonal contact structure and the F-Fold student showing a washed-out matrix with only a diagonal band. Bottom: per-residue pLDDT traces for teacher and student, nearly superimposed.">
+  <figcaption><strong>The student learned confidence, not the fold.</strong>
+  The predicted distance matrix (top right) reproduces the near-diagonal band —
+  local secondary structure — but loses the sharp off-diagonal contacts that
+  define lysozyme's tertiary packing, which is exactly what a long-range
+  P@L/5 of 0.034 looks like. The per-residue confidence head (bottom) tracks the
+  teacher closely, including the low-confidence N-terminal signal peptide
+  (residues 1–18), at Pearson r = 0.958. Held-out protein <code>P61626</code>,
+  148 residues; teacher is AlphaFold DB v6.</figcaption>
+</figure>
+
+<h2 id="limits">Limitations, stated plainly</h2>
+<ul>
+  <li><strong>It does not predict usable structures.</strong> TM-score 0.200
+    means the fold is wrong. This is a pipeline and an architecture, not a
+    structure predictor you should deploy.</li>
+  <li><strong>A student cannot exceed its teacher.</strong> Distillation from
+    AlphaFold bounds accuracy by AlphaFold. Claims of superiority over AlphaFold
+    would be unsupportable and are not made anywhere in this project.</li>
+  <li><strong>Trained for 2,000 steps on 1,550 structures</strong>
+    (172 held for validation, 1 for test). AlphaFold3
+    was trained on the PDB with deep MSAs over orders of magnitude more compute.
+    The gap is expected, not anomalous.</li>
+  <li><strong>No MSA, no templates, no all-atom output</strong> in the trained
+    path. Those modules are implemented and parameter-audited, but the
+    distillation runs protein-only and token-level.</li>
+  <li><strong><code>ffold-base</code> has never been trained</strong> — only
+    audited for parameter count and forward-pass shape correctness. Training it
+    needs hundreds of GPU-days.</li>
+  <li><strong>Single held-out protein.</strong> One 148-residue monomer is an
+    illustration, not an evaluation set.</li>
+</ul>
+
+<h2>Reproduce it</h2>
+<pre><code>git clone https://github.com/zhu-algorithm/f-fold
+cd f-fold &amp;&amp; pip install -r requirements.txt
+
+python ffold/check_alignment.py     # 203/203, exit 0
+python ffold/audit_params.py        # parameter table
+
+python ffold/build_dataset.py --n 2800 --min-plddt 70
+python ffold/train.py --auto-batch --amp --grad-checkpoint --crop 160
+python ffold/evaluate.py            # metrics vs the AlphaFold teacher</code></pre>
+
+<h2>Licensing</h2>
+<p>Apache-2.0. <span class="pill">no gated weights</span>
+<span class="pill">no redistributed checkpoints</span></p>
+<p>Hyperparameter values are extracted from OpenFold3-preview (Apache-2.0,
+© 2026 AlQuraishi Laboratory; © 2026 Advanced Micro Devices, Inc.). No
+OpenFold3 model weights are redistributed. Teacher labels derive from the
+AlphaFold Protein Structure Database (EMBL-EBI / DeepMind, CC&nbsp;BY&nbsp;4.0).</p>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <p><strong>References.</strong>
+      Abramson et&nbsp;al., <em>Accurate structure prediction of biomolecular
+      interactions with AlphaFold&nbsp;3</em>, Nature 630 (2024) ·
+      OpenFold3-preview, AlQuraishi Lab / OpenFold consortium ·
+      Varadi et&nbsp;al., <em>AlphaFold Protein Structure Database</em>,
+      Nucleic Acids Research 50 (2022) ·
+      Karras et&nbsp;al., <em>Elucidating the design space of diffusion-based
+      generative models</em>, NeurIPS 2022.</p>
+    <p><a href="https://github.com/zhu-algorithm/f-fold">github.com/zhu-algorithm/f-fold</a>
+      — every figure and number on this page is regenerated by
+      <code>ffold/make_figures.py</code> and <code>ffold/evaluate.py</code>.</p>
+  </div>
+</footer>
+
+</body>
+</html>
