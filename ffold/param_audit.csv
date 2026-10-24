@@ -1,0 +1,13 @@
+module,ffold_base,ffold_mini
+input_embedder,1477381,135189
+recycling,164864,19040
+msa_module,3063488,0
+template_module,255296,0
+pairformer,147394560,2036352
+diffusion_conditioning,2439554,311442
+diffusion_atom_encoder,1039536,60624
+diffusion_transformer,198343680,5516832
+diffusion_atom_decoder,937456,43664
+distogram_head,8256,3136
+confidence_heads,12879788,690044
+TOTAL,368003859,8816323
