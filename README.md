@@ -85,6 +85,36 @@ over 0–32 Å.
 This is F-Fold's own count at AF3 dimensions. It is not a claim about the
 OpenFold3 checkpoint's parameter count, which is gated and was not inspected.
 
+## Compared with AlphaFold
+
+The defensible axes are licensing, hardware floor and trainability — **not
+accuracy**, where F-Fold loses decisively and by construction.
+
+| | AlphaFold2 | AlphaFold3 | OpenFold3-preview | F-Fold |
+|---|---|---|---|---|
+| Source-code licence | Apache-2.0 | Apache-2.0 (CC-BY-NC-SA 4.0 at the Nov 2024 release) | Apache-2.0 | Apache-2.0 |
+| Model weights | CC BY 4.0, public download | Request form; non-commercial organisations only; no redistribution | Apache-2.0, gated on HuggingFace | **You train them** |
+| Commercial use of weights | Permitted | Prohibited | Permitted once granted | Yours |
+| Outputs may train similar predictors | AlphaFold DB is CC BY 4.0 | Explicitly prohibited by the parameter terms | Not restricted | Yours |
+| Molecule types | Protein, complexes | Protein, DNA, RNA, ligands, ions | Protein, DNA, RNA, ligands | Protein only (trained path) |
+| Published minimum VRAM | not stated here | not stated here | 24 GB inference, 80 GB rec. | **15 GB trains** (5.9 GB measured) |
+| Train/fine-tune yourself | No training code | No training code | Yes, at AF3 scale | **Yes, one consumer GPU** |
+| Structure accuracy | Experimental-level on many monomers | AF2-level and above, incl. interactions | Targets bitwise AF3 reproduction | **Not usable — TM-score 0.200** |
+
+Read the last row first: on every accuracy axis AlphaFold and OpenFold3 win and
+F-Fold loses. Its teacher *is* AlphaFold, so it cannot exceed it. The table
+shows that a narrower thing — an AF3-dimension model you can train, own and
+relicense on hardware you already have — is achievable, not that it predicts
+better.
+
+Licence terms are summarised from the AlphaFold 3 repository and its
+`WEIGHTS_TERMS_OF_USE.md`, the AlphaFold 2 repository and the OpenFold3 model
+card as published at the time of writing; the VRAM row quotes only figures this
+project measured. Terms change — check upstream before relying on this. Summary,
+not legal advice. F-Fold's teacher labels come from the AlphaFold Protein
+Structure Database under CC BY 4.0, not from AlphaFold 3 parameters or
+AlphaFold Server output.
+
 ## Quickstart
 
 ```bash

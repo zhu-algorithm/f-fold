@@ -11,3 +11,15 @@ Source: https://github.com/aqlaboratory/openfold3
 No OpenFold3 model weights are redistributed here. Teacher labels are derived
 from AlphaFold Protein Structure Database predictions (EMBL-EBI / DeepMind),
 licensed CC BY 4.0.
+
+--- Bundled third-party assets (project page, docs/) ---
+
+3Dmol.js 2.5.5 — BSD-3-Clause, Rego & Koes.
+  docs/assets/vendor/3Dmol-min.js
+  Licence text: docs/assets/vendor/3Dmol-LICENSE.txt
+
+Protein coordinates under docs/assets/structures/ are experimental crystal
+structures redistributed from the RCSB PDB (2GL7, 3SL9, 4NM7, 3S8V), trimmed
+to one biological assembly copy with waters and cryoprotectants removed. PDB
+data are released without restriction; please cite the primary publications
+linked on the project page. These files are NOT F-Fold predictions.

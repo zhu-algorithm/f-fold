@@ -53,12 +53,52 @@
     padding:2px 8px;border-radius:999px;background:var(--panel);
     border:1px solid var(--rule);color:var(--mid)}
   .pass{color:var(--ok);font-weight:600}
+  .note-sm{font-size:12.5px;color:var(--faint);line-height:1.5}
+  td .note-sm{display:block;margin-top:2px}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
     gap:14px;margin:0 0 24px}
   .stat{border:1px solid var(--rule);border-radius:8px;padding:14px 16px}
   .stat .v{font-size:25px;font-weight:650;font-family:var(--mono);
     letter-spacing:-.02em;line-height:1.2}
   .stat .k{font-size:12.5px;color:var(--mid);margin-top:3px}
+  /* --- structure viewer --- */
+  .hero-viewer{margin:34px 0 0}
+  .viewer-frame{position:relative;border:1px solid var(--rule);border-radius:10px;
+    overflow:hidden;background:#fff}
+  #viewer{position:relative;width:100%;height:420px}
+  #viewer canvas{display:block}
+  .viewer-status{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    font-size:14px;color:var(--mid);background:rgba(255,255,255,.94);
+    padding:10px 16px;border-radius:6px;text-align:center;max-width:80%;z-index:5}
+  .viewer-status.error{color:var(--warn)}
+  #viewer-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+  #viewer-tabs button{flex:1 1 170px;text-align:left;cursor:pointer;
+    background:#fff;border:1px solid var(--rule);border-radius:8px;
+    padding:9px 12px;font:inherit;line-height:1.3;color:var(--ink)}
+  #viewer-tabs button:hover{border-color:var(--faint)}
+  #viewer-tabs button[aria-selected="true"]{border-color:var(--ink);
+    background:var(--panel)}
+  #viewer-tabs button strong{display:block;font-family:var(--mono);font-size:13px}
+  #viewer-tabs button span{display:block;font-size:12px;color:var(--mid);
+    margin-top:2px}
+  .viewer-bar{display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+    margin:14px 0 0;font-size:13.5px}
+  #viewer-key{display:flex;flex-wrap:wrap;gap:14px}
+  .key-item{display:inline-flex;align-items:center;gap:6px;color:var(--mid)}
+  .key-item i{width:11px;height:11px;border-radius:3px;display:inline-block;
+    flex:0 0 auto}
+  #viewer-spin{margin-left:auto;cursor:pointer;background:#fff;
+    border:1px solid var(--rule);border-radius:6px;padding:6px 12px;
+    font:inherit;font-size:13px;color:var(--mid)}
+  #viewer-spin:hover{border-color:var(--ink);color:var(--ink)}
+  #viewer-stage{font-family:var(--mono);font-size:12px;color:var(--accent);
+    text-transform:uppercase;letter-spacing:.05em;margin:16px 0 4px}
+  #viewer-blurb{font-size:14.5px;color:var(--mid);margin:0 0 6px;max-width:46em}
+  #viewer-cite{font-size:13px;color:var(--faint);margin:0}
+  #viewer-cite a{color:var(--mid)}
+  .not-pred{margin:14px 0 0;padding:10px 14px;border:1px dashed var(--rule);
+    border-radius:8px;font-size:13.5px;color:var(--mid);background:var(--panel)}
+  @media (max-width:640px){#viewer{height:320px}}
   footer{border-top:1px solid var(--rule);margin-top:72px;padding:32px 0 64px;
     font-size:14px;color:var(--mid)}
   footer a{color:var(--ink)}
@@ -76,11 +116,40 @@
     <div class="links">
       <a class="primary" href="https://github.com/zhu-algorithm/f-fold">Source on GitHub</a>
       <a href="#alignment">Alignment evidence</a>
+      <a href="#compare">vs AlphaFold</a>
       <a href="#results">Measured results</a>
       <a href="#limits">Limitations</a>
     </div>
+
+    <div class="hero-viewer">
+      <div class="viewer-frame">
+        <div id="viewer" role="img"
+             aria-label="Rotating three-dimensional cartoon rendering of Wnt pathway protein complexes; chains are coloured per the key below."></div>
+        <div id="viewer-status" class="viewer-status">Loading 3D viewer…</div>
+      </div>
+      <div id="viewer-tabs" role="tablist"
+           aria-label="Wnt pathway structures"></div>
+      <div class="viewer-bar">
+        <div id="viewer-key"></div>
+        <button id="viewer-spin" type="button" aria-pressed="true">Pause rotation</button>
+      </div>
+      <p id="viewer-stage"></p>
+      <p id="viewer-blurb"></p>
+      <p id="viewer-cite"></p>
+      <p class="not-pred"><strong>These are experimental crystal structures
+        from the RCSB PDB, not F-Fold predictions.</strong> They show the
+        Wnt/β-catenin complexes this project is aimed at; F-Fold does not yet
+        produce usable folds (see <a href="#results">results</a>). Coordinates
+        are trimmed to one biological copy with waters and cryoprotectants
+        removed.</p>
+    </div>
   </div>
 </header>
+
+<!-- 3Dmol.js 2.5.5, BSD-3-Clause, vendored (no third-party CDN at runtime).
+     License: assets/vendor/3Dmol-LICENSE.txt -->
+<script src="assets/vendor/3Dmol-min.js" defer></script>
+<script src="assets/viewer.js" defer></script>
 
 <div class="wrap">
 
@@ -170,6 +239,78 @@ PAE and PDE 64 bins over 0–32&nbsp;Å. Diffusion follows the EDM schedule with
   it. These are F-Fold's own counts — not a claim about the OpenFold3
   checkpoint, which is gated and was never inspected.</figcaption>
 </figure>
+
+<h2 id="compare">Compared with AlphaFold</h2>
+<p>The honest axes of comparison are licensing, hardware floor and
+trainability — <strong>not accuracy</strong>, where F-Fold loses decisively and
+by construction. Accuracy is included in the table anyway, because leaving it
+out would be the dishonest move.</p>
+
+<table>
+  <thead><tr>
+    <th>&nbsp;</th><th>AlphaFold2</th><th>AlphaFold3</th>
+    <th>OpenFold3-preview</th><th>F-Fold</th>
+  </tr></thead>
+  <tbody>
+    <tr><td><strong>Source-code licence</strong></td>
+        <td>Apache-2.0</td>
+        <td>Apache-2.0 <span class="note-sm">(was CC-BY-NC-SA&nbsp;4.0 at the Nov&nbsp;2024 release)</span></td>
+        <td>Apache-2.0</td>
+        <td>Apache-2.0</td></tr>
+    <tr><td><strong>Model weights</strong></td>
+        <td>CC&nbsp;BY&nbsp;4.0, public download</td>
+        <td>Request form; non-commercial organisations only; redistribution prohibited</td>
+        <td>Apache-2.0, but gated behind a HuggingFace access form</td>
+        <td><strong>You train them.</strong> Nothing to request, nothing gated</td></tr>
+    <tr><td><strong>Commercial use of weights</strong></td>
+        <td>Permitted</td>
+        <td>Prohibited</td>
+        <td>Permitted once access is granted</td>
+        <td>Yours</td></tr>
+    <tr><td><strong>Outputs may train similar predictors</strong></td>
+        <td>AlphaFold DB is CC&nbsp;BY&nbsp;4.0</td>
+        <td>Explicitly prohibited by the parameter terms</td>
+        <td>Not restricted</td>
+        <td>Yours</td></tr>
+    <tr><td><strong>Molecule types</strong></td>
+        <td>Protein, protein complexes</td>
+        <td>Protein, DNA, RNA, ligands, ions</td>
+        <td>Protein, DNA, RNA, ligands</td>
+        <td>Protein only in the trained path</td></tr>
+    <tr><td><strong>Published minimum VRAM</strong></td>
+        <td class="note-sm">not stated here</td>
+        <td class="note-sm">not stated here</td>
+        <td>24&nbsp;GB inference (80&nbsp;GB recommended)</td>
+        <td><strong>15&nbsp;GB trains</strong> <code>ffold-mini</code> (5.9&nbsp;GB measured peak)</td></tr>
+    <tr><td><strong>Train or fine-tune it yourself</strong></td>
+        <td>No training code released</td>
+        <td>No training code released</td>
+        <td>Yes — but at AF3 scale</td>
+        <td><strong>Yes, on one consumer GPU</strong></td></tr>
+    <tr><td><strong>Structure accuracy</strong></td>
+        <td>Experimental-level on many monomers</td>
+        <td>AlphaFold2-level and above, incl. interactions</td>
+        <td>Targets bitwise AF3 reproduction</td>
+        <td><strong>Not usable — TM-score 0.200</strong></td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <p><strong>Read that last row before anything else.</strong> On every axis
+  that measures structural accuracy, AlphaFold and OpenFold3 win and F-Fold
+  loses. F-Fold's teacher <em>is</em> AlphaFold, so it cannot exceed it. What
+  the table shows is that a different, narrower thing — an AF3-dimension model
+  you can actually train, own and relicense on hardware you already have —
+  is achievable; not that it predicts better.</p>
+  <p class="note-sm">Licence terms are summarised from the AlphaFold&nbsp;3
+  repository and its <code>WEIGHTS_TERMS_OF_USE.md</code>, the AlphaFold&nbsp;2
+  repository, and the OpenFold3 model card, each as published at the time of
+  writing; the VRAM row quotes only figures this project verified. Terms change
+  — check the upstream licences yourself before relying on any of this. This is
+  a summary, not legal advice. F-Fold's teacher labels come from the AlphaFold
+  Protein Structure Database under CC&nbsp;BY&nbsp;4.0, not from AlphaFold&nbsp;3
+  parameters or AlphaFold Server output.</p>
+</div>
 
 <h2 id="results">Measured results</h2>
 <p>A 1,723-structure teacher set was built from AlphaFold&nbsp;DB <strong>v6</strong>
