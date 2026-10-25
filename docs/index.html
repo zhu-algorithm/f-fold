@@ -53,6 +53,15 @@
     padding:2px 8px;border-radius:999px;background:var(--panel);
     border:1px solid var(--rule);color:var(--mid)}
   .pass{color:var(--ok);font-weight:600}
+  .pubs{padding-left:22px;margin:0 0 24px}
+  .pubs li{margin:0 0 20px;padding-left:4px}
+  .pubs span{display:block}
+  .pt{font-weight:600;line-height:1.45;margin-bottom:3px}
+  .pa{font-size:14px;color:var(--mid)}
+  .pj{font-size:13.5px;color:var(--faint);margin-top:2px}
+  .pj a{color:var(--mid)}
+  .pn{font-size:13.5px;color:var(--mid);margin-top:7px;padding-left:11px;
+    border-left:2px solid var(--rule);line-height:1.6}
   .note-sm{font-size:12.5px;color:var(--faint);line-height:1.5}
   td .note-sm{display:block;margin-top:2px}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
@@ -72,6 +81,10 @@
     padding:10px 16px;border-radius:6px;text-align:center;max-width:80%;z-index:5}
   .viewer-status.error{color:var(--warn)}
   #viewer-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+  .tab-group{flex:1 1 100%;font-family:var(--mono);font-size:11.5px;
+    text-transform:uppercase;letter-spacing:.06em;color:var(--faint);
+    margin:10px 0 -2px}
+  .tab-group:first-child{margin-top:0}
   #viewer-tabs button{flex:1 1 170px;text-align:left;cursor:pointer;
     background:#fff;border:1px solid var(--rule);border-radius:8px;
     padding:9px 12px;font:inherit;line-height:1.3;color:var(--ink)}
@@ -239,6 +252,59 @@ PAE and PDE 64 bins over 0–32&nbsp;Å. Diffusion follows the EDM schedule with
   it. These are F-Fold's own counts — not a claim about the OpenFold3
   checkpoint, which is gated and was never inspected.</figcaption>
 </figure>
+
+<h2 id="people">Who develops this</h2>
+<p class="lead"><strong>This is developed by Prof. Di Zhu.</strong></p>
+<p>The group works on direct disruption of β-catenin's protein–protein
+interactions with its nuclear partners — the interface shown in the viewer
+above. Two of the structures in that collection, <code>8Z61</code> and
+<code>8Z5J</code>, were determined and deposited by this group. That domain
+focus is why F-Fold's structural collection is centred on β-catenin rather
+than on a generic benchmark set.</p>
+
+<h3>Selected publications</h3>
+<ol class="pubs">
+  <li>
+    <span class="pt">Discovery of Novel 1-Phenylpiperidine Urea-Containing
+      Derivatives Inhibiting β-Catenin/BCL9 Interaction and Exerting Antitumor
+      Efficacy through the Activation of Antigen Presentation of cDC1 Cells</span>
+    <span class="pa">Zhu W, Liu C, Xi K, Li A, Shen L, Li Y, <em>et al.</em>;
+      Zhao Y*, Meng X*, <strong>Zhu D*</strong></span>
+    <span class="pj"><em>J. Med. Chem.</em> 2024, 67, 12485–12520 ·
+      <a href="https://doi.org/10.1021/acs.jmedchem.3c02079">doi:10.1021/acs.jmedchem.3c02079</a> ·
+      <a href="https://pubmed.ncbi.nlm.nih.gov/38912577/">PMID 38912577</a></span>
+    <span class="pn">Reports the two apo β-catenin structures
+      (<a href="https://www.rcsb.org/structure/8Z61">8Z61</a>,
+      <a href="https://www.rcsb.org/structure/8Z5J">8Z5J</a>) shown above, and
+      the conformational dynamics at the BCL9 site that shift inhibitor binding
+      modes. Compound <strong>28</strong> binds β-catenin with
+      K<sub>d</sub> = 82 nM.</span>
+  </li>
+  <li>
+    <span class="pt">Discovery of Novel 3-Phenylpiperidine Derivatives
+      Targeting the β-Catenin/B-Cell Lymphoma 9 Interaction as a Single Agent
+      and in Combination with the Anti-PD-1 Antibody for the Treatment of
+      Colorectal Cancer</span>
+    <span class="pa">Zhang H, Liu C, Chen Q, Shen L, Xiao W, Li J, Wang Y*,
+      <strong>Zhu D*</strong>, Zhang Q*, Li J*</span>
+    <span class="pj"><em>J. Med. Chem.</em> 2023, 66, 1349–1379 ·
+      <a href="https://doi.org/10.1021/acs.jmedchem.2c01568">doi:10.1021/acs.jmedchem.2c01568</a></span>
+    <span class="pn">Compound <strong>41</strong>: IC<sub>50</sub> 0.72 µM in a
+      competitive fluorescence-polarisation assay, K<sub>D</sub> 0.26 µM for
+      β-catenin, with <em>in vivo</em> anti-colorectal-cancer activity and
+      efficacy in combination with anti-PD-1 antibody.</span>
+  </li>
+  <li>
+    <span class="pt">Medicinal Chemistry Strategies for the Development of
+      Inhibitors Disrupting β-Catenin's Interactions with Its Nuclear
+      Partners</span>
+    <span class="pa">Zhang H, Liu C, <strong>Zhu D*</strong>, Zhang Q*, Li J*</span>
+    <span class="pj"><em>J. Med. Chem.</em> 2023, 66, 1–31 ·
+      <a href="https://doi.org/10.1021/acs.jmedchem.2c01016">doi:10.1021/acs.jmedchem.2c01016</a></span>
+    <span class="pn">A review of peptide and small-molecule strategies against
+      β-catenin's interactions with TCF, BCL9, CBP and p300.</span>
+  </li>
+</ol>
 
 <h2 id="compare">Compared with AlphaFold</h2>
 <p>The honest axes of comparison are licensing, hardware floor and

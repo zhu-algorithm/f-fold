@@ -85,6 +85,34 @@ over 0–32 Å.
 This is F-Fold's own count at AF3 dimensions. It is not a claim about the
 OpenFold3 checkpoint's parameter count, which is gated and was not inspected.
 
+## Who develops this
+
+**This is developed by Prof. Di Zhu.**
+
+The group works on direct disruption of β-catenin's protein–protein
+interactions with its nuclear partners. Two structures in this project's
+collection — [8Z61](https://www.rcsb.org/structure/8Z61) and
+[8Z5J](https://www.rcsb.org/structure/8Z5J) — were determined and deposited by
+this group.
+
+1. Zhu W, Liu C, Xi K, Li A, Shen L, Li Y, *et al.*; Zhao Y\*, Meng X\*, **Zhu D\***.
+   *Discovery of Novel 1-Phenylpiperidine Urea-Containing Derivatives Inhibiting
+   β-Catenin/BCL9 Interaction and Exerting Antitumor Efficacy through the
+   Activation of Antigen Presentation of cDC1 Cells.*
+   J. Med. Chem. 2024, 67, 12485–12520.
+   [doi:10.1021/acs.jmedchem.3c02079](https://doi.org/10.1021/acs.jmedchem.3c02079) ·
+   PMID 38912577 — reports 8Z61 and 8Z5J; compound **28** binds β-catenin at K_d = 82 nM.
+2. Zhang H, Liu C, Chen Q, Shen L, Xiao W, Li J, Wang Y\*, **Zhu D\***, Zhang Q\*, Li J\*.
+   *Discovery of Novel 3-Phenylpiperidine Derivatives Targeting the β-Catenin/BCL9
+   Interaction as a Single Agent and in Combination with the Anti-PD-1 Antibody for
+   the Treatment of Colorectal Cancer.* J. Med. Chem. 2023, 66, 1349–1379.
+   [doi:10.1021/acs.jmedchem.2c01568](https://doi.org/10.1021/acs.jmedchem.2c01568)
+   — compound **41**: IC50 0.72 µM, K_D 0.26 µM.
+3. Zhang H, Liu C, **Zhu D\***, Zhang Q\*, Li J\*.
+   *Medicinal Chemistry Strategies for the Development of Inhibitors Disrupting
+   β-Catenin's Interactions with Its Nuclear Partners.* J. Med. Chem. 2023, 66, 1–31.
+   [doi:10.1021/acs.jmedchem.2c01016](https://doi.org/10.1021/acs.jmedchem.2c01016)
+
 ## Compared with AlphaFold
 
 The defensible axes are licensing, hardware floor and trainability — **not
