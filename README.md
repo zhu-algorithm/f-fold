@@ -180,6 +180,21 @@ Implemented in `ffold/layers.py` and `ffold/model.py`:
 The trained path is protein-only and token-level. AF3's data pipeline — CCD
 ligand graphs, MSA search, template search — is not implemented.
 
+## F-Fold 2.0 dynamics scaffold
+
+`ffold/ffold2.py` adds an opt-in research architecture without changing the
+original `FFold` interface:
+
+- 3D cryo-EM/cryo-ET density conditioning;
+- endpoint-preserving conformational path generation;
+- diagnostic energy and force heads;
+- differentiable bond, clash and path-smoothness constraints;
+- uncertainty-based active-learning ranking.
+
+This is an executable scaffold, not a trained dynamics model. Generated paths,
+energies and forces require simulation and experimental validation. See
+[`docs/FFOLD2_ARCHITECTURE.md`](docs/FFOLD2_ARCHITECTURE.md).
+
 ## Licensing
 
 Apache-2.0. See `LICENSE` and `NOTICE`. No OpenFold3 weights are
